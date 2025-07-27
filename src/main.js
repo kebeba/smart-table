@@ -7,6 +7,7 @@ import {initData} from "./data.js";
 import {processFormData} from "./lib/utils.js";
 
 import {initTable} from "./components/table.js";
+import {initSearching} from './components/searching.js';
 import {initFiltering} from "./components/filtering.js";
 import {initSorting} from "./components/sorting.js"
 import {initPagination} from './components/pagination.js';
@@ -39,6 +40,7 @@ function render(action) {
     let state = collectState(); // состояние полей из таблицы
     let result = [...data]; // копируем для последующего изменения
     // @todo: использование
+    result = applySearching(result, state, action);
     result = applyFiltering(result, state, action);
     result = applySorting(result, state, action);
     result = applyPagination(result, state, action);
@@ -49,14 +51,14 @@ function render(action) {
 const sampleTable = initTable({
     tableTemplate: 'table',
     rowTemplate: 'row',
-    before: ['header', 'filter'],
+    before: ['search', 'header', 'filter'],
     after: ['pagination'],
 }, render);
 
 // @todo: инициализация
 const applyPagination = initPagination(
-    sampleTable.pagination.elements,             // передаём сюда элементы пагинации, найденные в шаблоне
-    (el, page, isCurrent) => {                    // и колбэк, чтобы заполнять кнопки страниц данными
+    sampleTable.pagination.elements,
+    (el, page, isCurrent) => {
         const input = el.querySelector('input');
         const label = el.querySelector('span');
         input.value = page;
@@ -68,12 +70,14 @@ const applyPagination = initPagination(
 
 const applySorting = initSorting([
     sampleTable.header.elements.sortByDate,
-    sampleTable.header.elements.sortByTotal
+    sampleTable.header.elements.sortByTotal,
 ]);
 
 const applyFiltering = initFiltering(sampleTable.filter.elements, {
     searchBySeller: indexes.sellers
 });
+
+const applySearching = initSearching(sampleTable.search.elements.search.name);
 
 const appRoot = document.querySelector('#app');
 appRoot.appendChild(sampleTable.container);
