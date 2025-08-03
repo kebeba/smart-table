@@ -1,5 +1,6 @@
 import {getPages} from "../lib/utils.js";
 
+
 export const initPagination = ({pages, fromRow, toRow, totalRows}, createPage) => {
     // подготовить шаблон кнопки для страницы и очистить контейнер
     const pageTemplate = pages.firstElementChild.cloneNode(true);

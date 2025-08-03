@@ -39,9 +39,10 @@ function collectState() {
 async function render(action) {
     let state = collectState();                             // состояние полей из таблицы
     let query = {};                                         // здесь будут формироваться параметры запроса
+    
     query = applySearching(query, state, action);
     query = applyFiltering(query, state, action);
-    // result = applySorting(result, state, action);
+    query = applySorting(query, state, action);
     query = applyPagination(query, state, action);          // обновляем запрос
 
     const { total, items } = await api.getRecords(query);   // запрашиваем данные с собранными параметрами запроса
@@ -70,13 +71,16 @@ const {applyPagination, updatePagination} = initPagination(
     }
 );
 
+// инициализация сортировки
 const applySorting = initSorting([
     sampleTable.header.elements.sortByDate,
     sampleTable.header.elements.sortByTotal,
 ]);
 
+// инициализация фильтрации
 const {applyFiltering, updateIndexes} = initFiltering(sampleTable.filter.elements);
 
+// инициализация поиска
 const applySearching = initSearching(sampleTable.search.elements.search.name);
 
 const appRoot = document.querySelector('#app');
